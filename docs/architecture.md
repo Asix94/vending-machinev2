@@ -141,7 +141,7 @@ goals.
 
 | Pattern | Intended use | Status |
 | --- | --- | --- |
-| Value Object | Money, coins, and selectors | `Coin`, `Money`, and `ProductSelector` implemented |
+| Value Object | Money, coins, selectors, and immutable coin composition | `Coin`, `Money`, `ProductSelector`, and `CoinReserve` implemented |
 | Entity | Track a product slot by stable selector while stock changes | `ProductSlot` implemented |
 | Aggregate | Protect machine consistency and atomic purchases | Planned |
 | Repository | Persist and restore aggregate state | Planned |
@@ -158,6 +158,7 @@ src/
 └── VendingMachine/
     └── Domain/
         ├── Coin.php
+        ├── CoinReserve.php
         ├── Money.php
         ├── ProductSelector.php
         ├── ProductSlot.php
@@ -165,6 +166,7 @@ src/
             ├── EmptyProductSelector.php
             ├── InvalidCoinDenomination.php
             ├── InvalidProductPrice.php
+            ├── NegativeCoinQuantity.php
             ├── NegativeMoneyAmount.php
             └── NegativeProductStock.php
 ```

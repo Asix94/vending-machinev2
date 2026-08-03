@@ -47,6 +47,8 @@ Current example:
 - `ProductSelectorTest` verifies selector creation and rejects an empty value.
 - `ProductSlotTest` verifies entity creation, positive prices, absolute stock
   updates, and state preservation when negative stock is rejected.
+- `CoinReserveTest` verifies an empty initial reserve, immutable absolute
+  quantity updates, zero quantities, and rejection of negative quantities.
 
 ### Application tests
 

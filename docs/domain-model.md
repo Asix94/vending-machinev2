@@ -33,6 +33,12 @@ to address a product slot. Two selectors with the same value are equivalent.
 The selector will provide the stable identity value of `ProductSlot`, but it is
 not an Entity by itself.
 
+`CoinReserve` is an immutable domain collection modeled as a Value Object. It
+represents the quantity available for each accepted coin denomination. Unlike
+`Money`, it preserves physical composition because an amount alone cannot prove
+that exact change can be returned. Absolute quantity updates create a new
+reserve and leave previous instances unchanged.
+
 ## Entity
 
 An Entity represents a domain concept with a stable identity and a lifecycle.
@@ -124,6 +130,8 @@ be introduced when that behavior is implemented.
 | `ProductSlot` | Entity | Implemented |
 | `InvalidProductPrice` | Domain Exception | Implemented |
 | `NegativeProductStock` | Domain Exception | Implemented |
+| `CoinReserve` | Value Object | Implemented |
+| `NegativeCoinQuantity` | Domain Exception | Implemented |
 | `VendingMachine` | Aggregate Root | Planned |
 | Exact-change calculator | Domain Service candidate | Planned |
 
