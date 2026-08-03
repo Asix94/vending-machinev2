@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\VendingMachine\Domain;
 
+use App\VendingMachine\Domain\Exception\InsufficientCoinQuantity;
 use App\VendingMachine\Domain\Exception\NegativeCoinQuantity;
 
 final readonly class CoinReserve
@@ -33,6 +34,49 @@ final readonly class CoinReserve
 
         $quantities = $this->quantities;
         $quantities[$coin->cents()] = $quantity;
+
+        return new self($quantities);
+    }
+
+    public function withAddedCoins(Coin ...$coins): self
+    {
+        $quantities = $this->quantities;
+
+        foreach ($coins as $coin) {
+            $cents = $coin->cents();
+            $quantities[$cents] = ($quantities[$cents] ?? 0) + 1;
+        }
+
+        return new self($quantities);
+    }
+
+    public function withoutCoins(Coin ...$coins): self
+    {
+        $requiredQuantities = [];
+
+        foreach ($coins as $coin) {
+            $cents = $coin->cents();
+            $requiredQuantities[$cents] =
+                ($requiredQuantities[$cents] ?? 0) + 1;
+        }
+
+        foreach ($requiredQuantities as $cents => $required) {
+            $available = $this->quantities[$cents] ?? 0;
+
+            if ($required > $available) {
+                throw new InsufficientCoinQuantity(
+                    Coin::fromCents($cents),
+                    $available,
+                    $required,
+                );
+            }
+        }
+
+        $quantities = $this->quantities;
+
+        foreach ($requiredQuantities as $cents => $required) {
+            $quantities[$cents] -= $required;
+        }
 
         return new self($quantities);
     }

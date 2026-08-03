@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\VendingMachine\Domain;
 
+use App\VendingMachine\Domain\Exception\InsufficientCoinQuantity;
 use App\VendingMachine\Domain\Coin;
 use App\VendingMachine\Domain\CoinReserve;
 use App\VendingMachine\Domain\Exception\NegativeCoinQuantity;
@@ -66,5 +67,59 @@ final class CoinReserveTest extends TestCase
         );
 
         self::assertSame([10], $denominations);
+    }
+
+    public function testItAddsCoinsWithoutMutatingPreviousState(): void
+    {
+        $twentyFive = Coin::fromCents(25);
+        $ten = Coin::fromCents(10);
+
+        $original = CoinReserve::empty()
+            ->withQuantity($twentyFive, 2);
+
+        $updated = $original->withAddedCoins(
+            $twentyFive,
+            $twentyFive,
+            $ten,
+        );
+
+        self::assertSame(2, $original->quantityOf($twentyFive));
+        self::assertSame(4, $updated->quantityOf($twentyFive));
+        self::assertSame(1, $updated->quantityOf($ten));
+    }
+
+    public function testItRemovesCoinsWithoutMutatingPreviousState(): void
+    {
+        $twentyFive = Coin::fromCents(25);
+        $ten = Coin::fromCents(10);
+
+        $original = CoinReserve::empty()
+            ->withQuantity($twentyFive, 3)
+            ->withQuantity($ten, 1);
+
+        $updated = $original->withoutCoins(
+            $twentyFive,
+            $twentyFive,
+            $ten,
+        );
+
+        self::assertSame(3, $original->quantityOf($twentyFive));
+        self::assertSame(1, $original->quantityOf($ten));
+        self::assertSame(1, $updated->quantityOf($twentyFive));
+        self::assertSame(0, $updated->quantityOf($ten));
+    }
+
+    public function testItPreservesStateWhenRemovingUnavailableCoinsIsRejected(): void
+    {
+        $coin = Coin::fromCents(25);
+        $reserve = CoinReserve::empty()
+            ->withQuantity($coin, 1);
+
+        try {
+            $reserve->withoutCoins($coin, $coin);
+            self::fail('Expected InsufficientCoinQuantity to be thrown.');
+        } catch (InsufficientCoinQuantity) {
+            self::assertSame(1, $reserve->quantityOf($coin));
+        }
     }
 }
