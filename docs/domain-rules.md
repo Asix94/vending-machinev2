@@ -121,7 +121,7 @@ The initial product catalog contains:
 - Application command and response models.
 - Error representation and transport-level status mapping.
 - Ordering of coins in external responses.
-- Technical project structure and testing strategy.
+- Detailed architecture and package boundaries beyond the domain layer.
 
 ## Decision Log
 
