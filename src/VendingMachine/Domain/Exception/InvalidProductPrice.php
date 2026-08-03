@@ -6,12 +6,12 @@ namespace App\VendingMachine\Domain\Exception;
 
 use DomainException;
 
-final class NegativeMoneyAmount extends DomainException
+final class InvalidProductPrice extends DomainException
 {
     public function __construct(int $cents)
     {
         parent::__construct(
-            sprintf('Money amount cannot be negative: %d cents.', $cents),
+            sprintf('Product price must be greater than zero: %d cents.', $cents),
         );
     }
 }

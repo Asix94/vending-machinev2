@@ -39,8 +39,10 @@ An Entity represents a domain concept with a stable identity and a lifecycle.
 Its attributes may change while it remains the same conceptual object. Entity
 equality is based on identity rather than all current attributes.
 
-A `ProductSlot` will be an Entity because its stock may change while its unique
-selector continues to identify the same slot.
+`ProductSlot` is an Entity identified by `ProductSelector`. Its stock may change
+while the selector continues to identify the same slot. Its name and price are
+immutable in the current scope, while stock changes through controlled domain
+behavior.
 
 ## Immutability
 
@@ -119,7 +121,9 @@ be introduced when that behavior is implemented.
 | `NegativeMoneyAmount` | Domain Exception | Implemented |
 | `ProductSelector` | Value Object | Implemented |
 | `EmptyProductSelector` | Domain Exception | Implemented |
-| `ProductSlot` | Entity | Planned |
+| `ProductSlot` | Entity | Implemented |
+| `InvalidProductPrice` | Domain Exception | Implemented |
+| `NegativeProductStock` | Domain Exception | Implemented |
 | `VendingMachine` | Aggregate Root | Planned |
 | Exact-change calculator | Domain Service candidate | Planned |
 

@@ -142,6 +142,7 @@ goals.
 | Pattern | Intended use | Status |
 | --- | --- | --- |
 | Value Object | Money, coins, and selectors | `Coin`, `Money`, and `ProductSelector` implemented |
+| Entity | Track a product slot by stable selector while stock changes | `ProductSlot` implemented |
 | Aggregate | Protect machine consistency and atomic purchases | Planned |
 | Repository | Persist and restore aggregate state | Planned |
 | Command/Handler | Represent and execute application actions | Planned |
@@ -159,10 +160,13 @@ src/
         ├── Coin.php
         ├── Money.php
         ├── ProductSelector.php
+        ├── ProductSlot.php
         └── Exception/
             ├── EmptyProductSelector.php
             ├── InvalidCoinDenomination.php
-            └── NegativeMoneyAmount.php
+            ├── InvalidProductPrice.php
+            ├── NegativeMoneyAmount.php
+            └── NegativeProductStock.php
 ```
 
 Application and adapter structures will be added with their first concrete use

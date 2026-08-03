@@ -43,6 +43,10 @@ Current example:
 
 - `CoinTest` verifies every accepted denomination and rejects unsupported
   denominations.
+- `MoneyTest` verifies positive and zero amounts and rejects negative amounts.
+- `ProductSelectorTest` verifies selector creation and rejects an empty value.
+- `ProductSlotTest` verifies entity creation, positive prices, absolute stock
+  updates, and state preservation when negative stock is rejected.
 
 ### Application tests
 
