@@ -24,6 +24,10 @@ A Value Object should:
 interchangeable in this domain. Tracking a physical coin identity or serial
 number would not affect any business decision.
 
+`Money` is a Value Object that represents an arbitrary non-negative monetary
+amount in integer cents. Unlike `Coin`, it is not restricted to physical coin
+denominations.
+
 ## Entity
 
 An Entity represents a domain concept with a stable identity and a lifecycle.
@@ -106,7 +110,7 @@ be introduced when that behavior is implemented.
 | --- | --- | --- |
 | `Coin` | Value Object | Implemented |
 | `InvalidCoinDenomination` | Domain Exception | Implemented |
-| `Money` | Value Object | Planned |
+| `Money` | Value Object | Implemented |
 | `ProductSlot` | Entity | Planned |
 | `VendingMachine` | Aggregate Root | Planned |
 | Exact-change calculator | Domain Service candidate | Planned |
