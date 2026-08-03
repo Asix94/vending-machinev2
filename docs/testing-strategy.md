@@ -80,6 +80,11 @@ orchestration and error handling to be tested without PostgreSQL.
 - `ReturnInsertedCoinsUseCaseTest` verifies denomination order, customer-balance
   cleanup, the empty-operation result, and explicit persistence of the updated
   aggregate.
+- `SetProductStockUseCaseTest` verifies primitive selector mapping, stock
+  updates, persistence, and rejected unknown products without saving.
+- `SetCoinReserveQuantityUseCaseTest` verifies primitive denomination mapping,
+  reserve updates, persistence, and rejection of invalid denominations before
+  repository access.
 
 ### Integration tests
 
