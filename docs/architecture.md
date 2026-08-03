@@ -144,7 +144,7 @@ goals.
 | Value Object | Money, coins, selectors, and immutable coin composition | `Coin`, `Money`, `ProductSelector`, and `CoinReserve` implemented |
 | Entity | Track a product slot by stable selector while stock changes | `ProductSlot` implemented |
 | Domain Service | Calculate optimal exact change from a limited reserve | `ExactChangeCalculator` implemented |
-| Aggregate | Protect machine consistency and atomic purchases | Planned |
+| Aggregate | Protect catalog, customer operation, reserve, service, and atomic purchases | `VendingMachine` in progress |
 | Repository | Persist and restore aggregate state | Planned |
 | Command/Handler | Represent and execute application actions | Planned |
 | Strategy | Allow change-calculation policies to vary if needed | Deferred until a second policy exists |
@@ -163,14 +163,19 @@ src/
         ├── Money.php
         ├── ProductSelector.php
         ├── ProductSlot.php
+        ├── VendingMachine.php
         ├── Exception/
+        │   ├── DuplicateProductSelector.php
+        │   ├── EmptyProductCatalog.php
         │   ├── EmptyProductSelector.php
         │   ├── ExactChangeUnavailable.php
         │   ├── InvalidCoinDenomination.php
         │   ├── InvalidProductPrice.php
         │   ├── NegativeCoinQuantity.php
         │   ├── NegativeMoneyAmount.php
-        │   └── NegativeProductStock.php
+        │   ├── NegativeProductStock.php
+        │   ├── ProductNotFound.php
+        │   └── ServiceUnavailableDuringOperation.php
         └── Service/
             └── ExactChangeCalculator.php
 ```

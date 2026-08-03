@@ -54,6 +54,13 @@ Current example:
   multiple-coin combinations, bounded inventory where greedy selection fails,
   minimum coin count, deterministic descending order, and unavailable exact
   change.
+- `VendingMachineCreationTest` verifies catalog creation, empty-catalog
+  rejection, duplicate selectors, and initial customer and reserve state.
+- `VendingMachineCoinOperationTest` verifies inserted balance, insertion order,
+  exact coin return, customer-operation cleanup, and reserve isolation.
+- `VendingMachineServiceTest` verifies absolute product and reserve updates,
+  unknown products, service availability precedence, state preservation, and
+  service reactivation after returning inserted coins.
 
 ### Application tests
 

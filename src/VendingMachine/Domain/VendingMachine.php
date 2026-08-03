@@ -6,6 +6,8 @@ namespace App\VendingMachine\Domain;
 
 use App\VendingMachine\Domain\Exception\DuplicateProductSelector;
 use App\VendingMachine\Domain\Exception\EmptyProductCatalog;
+use App\VendingMachine\Domain\Exception\ProductNotFound;
+use App\VendingMachine\Domain\Exception\ServiceUnavailableDuringOperation;
 
 final class VendingMachine
 {
@@ -74,5 +76,48 @@ final class VendingMachine
         $this->insertedCoins = [];
 
         return $coins;
+    }
+
+    public function setProductStock(
+        ProductSelector $selector,
+        int $quantity,
+    ): void {
+        $this->ensureServiceIsAvailable();
+
+        $this->findProduct($selector)->setStock($quantity);
+    }
+
+    public function productStock(ProductSelector $selector): int
+    {
+        return $this->findProduct($selector)->stock();
+    }
+
+    private function findProduct(
+        ProductSelector $selector,
+    ): ProductSlot {
+        $product = $this->products[$selector->value()] ?? null;
+
+        if ($product === null) {
+            throw new ProductNotFound($selector);
+        }
+
+        return $product;
+    }
+
+    public function setCoinReserveQuantity(
+        Coin $coin,
+        int $quantity,
+    ): void {
+        $this->ensureServiceIsAvailable();
+
+        $this->coinReserve = $this->coinReserve
+            ->withQuantity($coin, $quantity);
+    }
+
+    private function ensureServiceIsAvailable(): void
+    {
+        if ($this->insertedCoins !== []) {
+            throw new ServiceUnavailableDuringOperation();
+        }
     }
 }

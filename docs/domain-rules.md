@@ -67,6 +67,8 @@ The initial product catalog contains:
 - The coin reserve can only be set for an accepted denomination.
 - The coin reserve starts empty.
 - Service operations are rejected while there are inserted coins.
+- Service availability is checked before product lookup or quantity validation.
+- Product and coin quantities are updated through individual domain operations.
 
 ### Returning inserted coins
 
@@ -141,3 +143,7 @@ The initial product catalog contains:
    remain atomic to allow future concurrency controls.
 8. Exact change uses a bounded recursive search because the domain has four
    fixed denominations and greedy selection can miss valid combinations.
+9. Service operations are individual aggregate methods; a future Application
+   use case may coordinate multiple updates as a transactional batch.
+10. An active customer operation rejects SERVICE before selector and quantity
+    validation, giving service availability deterministic error precedence.

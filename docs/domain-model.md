@@ -103,9 +103,16 @@ that must change together. Its Aggregate Root is the only entry point for
 operations that can modify the aggregate, and it protects all invariants inside
 that boundary.
 
-`VendingMachine` is planned as the Aggregate Root responsible for inserted
-coins, product stock, the coin reserve, and atomic purchases. This decision will
-be validated as the model evolves rather than implemented in advance.
+`VendingMachine` is the Aggregate Root responsible for the product catalog,
+inserted coins, and the coin reserve. It currently protects catalog creation,
+customer coin operations, and service operations. Purchase behavior remains in
+progress.
+
+The aggregate keeps inserted coins as the source of truth and derives the
+inserted balance from them. It does not expose mutable `ProductSlot` or
+`CoinReserve` instances. Service mutations are rejected while customer coins
+are inserted, and that availability rule is evaluated before selector or
+quantity validation.
 
 ## Domain Service
 
@@ -139,7 +146,11 @@ combination exists. It does not modify the reserve.
 | `NegativeCoinQuantity` | Domain Exception | Implemented |
 | `ExactChangeCalculator` | Domain Service | Implemented |
 | `ExactChangeUnavailable` | Domain Exception | Implemented |
-| `VendingMachine` | Aggregate Root | Planned |
+| `VendingMachine` | Aggregate Root | In progress |
+| `DuplicateProductSelector` | Domain Exception | Implemented |
+| `EmptyProductCatalog` | Domain Exception | Implemented |
+| `ProductNotFound` | Domain Exception | Implemented |
+| `ServiceUnavailableDuringOperation` | Domain Exception | Implemented |
 
 ## Domain Independence
 
