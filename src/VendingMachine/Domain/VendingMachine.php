@@ -6,8 +6,10 @@ namespace App\VendingMachine\Domain;
 
 use App\VendingMachine\Domain\Exception\DuplicateProductSelector;
 use App\VendingMachine\Domain\Exception\EmptyProductCatalog;
+use App\VendingMachine\Domain\Exception\InsufficientBalance;
 use App\VendingMachine\Domain\Exception\ProductNotFound;
 use App\VendingMachine\Domain\Exception\ServiceUnavailableDuringOperation;
+use App\VendingMachine\Domain\Service\ExactChangeCalculator;
 
 final class VendingMachine
 {
@@ -119,5 +121,44 @@ final class VendingMachine
         if ($this->insertedCoins !== []) {
             throw new ServiceUnavailableDuringOperation();
         }
+    }
+
+    public function buyProduct(
+        ProductSelector $selector,
+        ExactChangeCalculator $changeCalculator,
+    ): PurchaseResult {
+        $product = $this->findProduct($selector);
+        $product->ensureAvailable();
+
+        $balance = $this->insertedBalance();
+
+        if ($balance->isLessThan($product->price())) {
+            throw new InsufficientBalance(
+                $balance,
+                $product->price(),
+            );
+        }
+
+        $changeAmount = $balance->subtract($product->price());
+
+        $change = $changeCalculator->calculate(
+            $changeAmount,
+            $this->coinReserve,
+        );
+
+        $updatedReserve = $this->coinReserve
+            ->withoutCoins(...$change)
+            ->withAddedCoins(...$this->insertedCoins);
+
+        $result = PurchaseResult::create(
+            $product->selector(),
+            ...$change,
+        );
+
+        $product->dispenseOne();
+        $this->coinReserve = $updatedReserve;
+        $this->insertedCoins = [];
+
+        return $result;
     }
 }
