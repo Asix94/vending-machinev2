@@ -77,6 +77,9 @@ orchestration and error handling to be tested without PostgreSQL.
 - `InsertCoinUseCaseTest` verifies the resulting balance, accumulation across
   executions, state preservation for invalid denominations, and explicit
   persistence through `VendingMachineRepository`.
+- `ReturnInsertedCoinsUseCaseTest` verifies denomination order, customer-balance
+  cleanup, the empty-operation result, and explicit persistence of the updated
+  aggregate.
 
 ### Integration tests
 

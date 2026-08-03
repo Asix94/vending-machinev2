@@ -51,7 +51,8 @@ describing a database or mapping strategy.
 
 The Application layer coordinates use cases such as inserting a coin, returning
 inserted coins, servicing stock, and purchasing a product. `InsertCoinUseCase`
-is the first implemented use case.
+and `ReturnInsertedCoinsUseCase` are implemented without duplicating the
+business rules protected by `VendingMachine`.
 
 Application code may:
 
@@ -157,7 +158,7 @@ goals.
 | Domain Service | Calculate optimal exact change from a limited reserve | `ExactChangeCalculator` implemented |
 | Aggregate | Protect catalog, customer operation, reserve, service, and atomic purchases | `VendingMachine` implemented |
 | Repository | Retrieve and persist Aggregate Roots through a Domain-owned interface | `VendingMachineRepository` implemented; durable implementation planned |
-| Use Case | Coordinate application actions without owning domain rules | `InsertCoinUseCase` implemented |
+| Use Case | Coordinate application actions without owning domain rules | `InsertCoinUseCase` and `ReturnInsertedCoinsUseCase` implemented |
 | Strategy | Allow change-calculation policies to vary if needed | Deferred until a second policy exists |
 | Adapter | Connect external mechanisms to inward-facing interfaces | In-memory persistence implemented; HTTP and PostgreSQL planned |
 
@@ -169,8 +170,10 @@ Only implemented concepts have directories:
 src/
 └── VendingMachine/
     ├── Application/
-    │   └── InsertCoin/
-    │       └── InsertCoinUseCase.php
+    │   ├── InsertCoin/
+    │   │   └── InsertCoinUseCase.php
+    │   └── ReturnInsertedCoins/
+    │       └── ReturnInsertedCoinsUseCase.php
     ├── Domain/
     │   ├── Coin.php
     │   ├── CoinReserve.php
