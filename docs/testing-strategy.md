@@ -85,6 +85,10 @@ orchestration and error handling to be tested without PostgreSQL.
 - `SetCoinReserveQuantityUseCaseTest` verifies primitive denomination mapping,
   reserve updates, persistence, and rejection of invalid denominations before
   repository access.
+- `BuyProductUseCaseTest` verifies exact-payment purchases, conversion of
+  Domain change coins to integer denominations, persistence after success,
+  state preservation without saving after rejection, and selector validation
+  before repository access.
 
 ### Integration tests
 

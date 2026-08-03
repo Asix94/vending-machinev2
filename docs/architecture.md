@@ -54,7 +54,9 @@ inserted coins, servicing stock, and purchasing a product. `InsertCoinUseCase`
 and `ReturnInsertedCoinsUseCase` coordinate customer coin operations.
 `SetProductStockUseCase` and `SetCoinReserveQuantityUseCase` coordinate the
 individual SERVICE operations without duplicating the business rules protected
-by `VendingMachine`.
+by `VendingMachine`. `BuyProductUseCase` coordinates the purchase and maps its
+Domain result to `BuyProductResult`, which exposes only a selector string and
+integer coin denominations to inbound adapters.
 
 Application code may:
 
@@ -160,7 +162,7 @@ goals.
 | Domain Service | Calculate optimal exact change from a limited reserve | `ExactChangeCalculator` implemented |
 | Aggregate | Protect catalog, customer operation, reserve, service, and atomic purchases | `VendingMachine` implemented |
 | Repository | Retrieve and persist Aggregate Roots through a Domain-owned interface | `VendingMachineRepository` implemented; durable implementation planned |
-| Use Case | Coordinate application actions without owning domain rules | Customer coin and individual SERVICE use cases implemented |
+| Use Case | Coordinate application actions without owning domain rules | Customer coin, individual SERVICE, and purchase use cases implemented |
 | Strategy | Allow change-calculation policies to vary if needed | Deferred until a second policy exists |
 | Adapter | Connect external mechanisms to inward-facing interfaces | In-memory persistence implemented; HTTP and PostgreSQL planned |
 
@@ -172,6 +174,9 @@ Only implemented concepts have directories:
 src/
 └── VendingMachine/
     ├── Application/
+    │   ├── BuyProduct/
+    │   │   ├── BuyProductResult.php
+    │   │   └── BuyProductUseCase.php
     │   ├── InsertCoin/
     │   │   └── InsertCoinUseCase.php
     │   ├── ReturnInsertedCoins/
