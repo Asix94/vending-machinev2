@@ -114,7 +114,7 @@ does not calculate change, persist itself, or map HTTP requests.
 
 ### Open/Closed Principle
 
-Purchase behavior will operate on generic product slots rather than branching
+Purchase behavior operates on generic product slots rather than branching
 on Water, Juice, or Soda. New catalog entries should not require rewriting the
 purchase algorithm.
 
@@ -141,10 +141,10 @@ goals.
 
 | Pattern | Intended use | Status |
 | --- | --- | --- |
-| Value Object | Money, coins, selectors, and immutable coin composition | `Coin`, `Money`, `ProductSelector`, and `CoinReserve` implemented |
+| Value Object | Money, coins, selectors, immutable coin composition, and purchase outcomes | `Coin`, `Money`, `ProductSelector`, `CoinReserve`, and `PurchaseResult` implemented |
 | Entity | Track a product slot by stable selector while stock changes | `ProductSlot` implemented |
 | Domain Service | Calculate optimal exact change from a limited reserve | `ExactChangeCalculator` implemented |
-| Aggregate | Protect catalog, customer operation, reserve, service, and atomic purchases | `VendingMachine` in progress |
+| Aggregate | Protect catalog, customer operation, reserve, service, and atomic purchases | `VendingMachine` implemented |
 | Repository | Persist and restore aggregate state | Planned |
 | Command/Handler | Represent and execute application actions | Planned |
 | Strategy | Allow change-calculation policies to vary if needed | Deferred until a second policy exists |
@@ -163,18 +163,22 @@ src/
         ├── Money.php
         ├── ProductSelector.php
         ├── ProductSlot.php
+        ├── PurchaseResult.php
         ├── VendingMachine.php
         ├── Exception/
         │   ├── DuplicateProductSelector.php
         │   ├── EmptyProductCatalog.php
         │   ├── EmptyProductSelector.php
         │   ├── ExactChangeUnavailable.php
+        │   ├── InsufficientBalance.php
+        │   ├── InsufficientCoinQuantity.php
         │   ├── InvalidCoinDenomination.php
         │   ├── InvalidProductPrice.php
         │   ├── NegativeCoinQuantity.php
         │   ├── NegativeMoneyAmount.php
         │   ├── NegativeProductStock.php
         │   ├── ProductNotFound.php
+        │   ├── ProductOutOfStock.php
         │   └── ServiceUnavailableDuringOperation.php
         └── Service/
             └── ExactChangeCalculator.php

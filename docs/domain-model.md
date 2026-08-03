@@ -36,8 +36,15 @@ not an Entity by itself.
 `CoinReserve` is an immutable domain collection modeled as a Value Object. It
 represents the quantity available for each accepted coin denomination. Unlike
 `Money`, it preserves physical composition because an amount alone cannot prove
-that exact change can be returned. Absolute quantity updates create a new
-reserve and leave previous instances unchanged.
+that exact change can be returned. Absolute quantity updates, adding inserted
+coins, and removing returned change create a new reserve and leave previous
+instances unchanged. Removing unavailable coins is rejected before a new
+reserve is created.
+
+`PurchaseResult` is an immutable Value Object that identifies the dispensed
+product by `ProductSelector` and contains the ordered list of returned change
+coins. It communicates the purchase outcome without exposing the mutable
+`ProductSlot` Entity.
 
 ## Entity
 
@@ -48,7 +55,8 @@ equality is based on identity rather than all current attributes.
 `ProductSlot` is an Entity identified by `ProductSelector`. Its stock may change
 while the selector continues to identify the same slot. Its name and price are
 immutable in the current scope, while stock changes through controlled domain
-behavior.
+behavior. Availability is checked before dispensing, and a successful dispense
+decreases stock by exactly one.
 
 ## Immutability
 
@@ -93,6 +101,11 @@ and other infrastructure concerns.
 unsupported denomination. A future delivery adapter may translate it into a
 transport-specific response, but the domain does not know that mapping.
 
+Purchase operations use specific Domain Exceptions for unavailable products,
+insufficient balance, and unavailable exact change. Reserve composition also
+distinguishes a negative absolute quantity from an attempt to remove more coins
+than are physically available.
+
 Database failures, malformed JSON, and network timeouts are technical errors,
 not Domain Exceptions.
 
@@ -104,15 +117,21 @@ operations that can modify the aggregate, and it protects all invariants inside
 that boundary.
 
 `VendingMachine` is the Aggregate Root responsible for the product catalog,
-inserted coins, and the coin reserve. It currently protects catalog creation,
-customer coin operations, and service operations. Purchase behavior remains in
-progress.
+inserted coins, and the coin reserve. It protects catalog creation, customer
+coin operations, service operations, and atomic product purchases.
 
 The aggregate keeps inserted coins as the source of truth and derives the
 inserted balance from them. It does not expose mutable `ProductSlot` or
 `CoinReserve` instances. Service mutations are rejected while customer coins
 are inserted, and that availability rule is evaluated before selector or
 quantity validation.
+
+Purchases validate product existence, stock, balance, and exact-change
+availability in that order. Change is calculated from the reserve that existed
+before the purchase, so inserted coins remain in temporary custody. All
+fallible work is completed before stock, reserve, and inserted coins are
+updated. A successful purchase dispenses one product, removes returned change,
+transfers inserted coins to the reserve, and clears the customer balance.
 
 ## Domain Service
 
@@ -142,14 +161,18 @@ combination exists. It does not modify the reserve.
 | `ProductSlot` | Entity | Implemented |
 | `InvalidProductPrice` | Domain Exception | Implemented |
 | `NegativeProductStock` | Domain Exception | Implemented |
+| `ProductOutOfStock` | Domain Exception | Implemented |
 | `CoinReserve` | Value Object | Implemented |
 | `NegativeCoinQuantity` | Domain Exception | Implemented |
+| `InsufficientCoinQuantity` | Domain Exception | Implemented |
 | `ExactChangeCalculator` | Domain Service | Implemented |
 | `ExactChangeUnavailable` | Domain Exception | Implemented |
-| `VendingMachine` | Aggregate Root | In progress |
+| `PurchaseResult` | Value Object | Implemented |
+| `VendingMachine` | Aggregate Root | Implemented |
 | `DuplicateProductSelector` | Domain Exception | Implemented |
 | `EmptyProductCatalog` | Domain Exception | Implemented |
 | `ProductNotFound` | Domain Exception | Implemented |
+| `InsufficientBalance` | Domain Exception | Implemented |
 | `ServiceUnavailableDuringOperation` | Domain Exception | Implemented |
 
 ## Domain Independence

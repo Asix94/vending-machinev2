@@ -46,14 +46,17 @@ Current example:
 - `MoneyTest` verifies positive and zero amounts and rejects negative amounts.
 - `ProductSelectorTest` verifies selector creation and rejects an empty value.
 - `ProductSlotTest` verifies entity creation, positive prices, absolute stock
-  updates, and state preservation when negative stock is rejected.
+  updates, availability, single-product dispensing, and state preservation when
+  stock operations are rejected.
 - `CoinReserveTest` verifies an empty initial reserve, immutable absolute
-  quantity updates, zero quantities, available denominations, and rejection of
-  negative quantities.
+  quantity updates, immutable coin addition and removal, available
+  denominations, and rejection of invalid or unavailable quantities.
 - `ExactChangeCalculatorTest` verifies zero change, exact denominations,
   multiple-coin combinations, bounded inventory where greedy selection fails,
   minimum coin count, deterministic descending order, and unavailable exact
   change.
+- `PurchaseResultTest` verifies the dispensed product selector and ordered
+  change returned by a successful purchase.
 - `VendingMachineCreationTest` verifies catalog creation, empty-catalog
   rejection, duplicate selectors, and initial customer and reserve state.
 - `VendingMachineCoinOperationTest` verifies inserted balance, insertion order,
@@ -61,6 +64,9 @@ Current example:
 - `VendingMachineServiceTest` verifies absolute product and reserve updates,
   unknown products, service availability precedence, state preservation, and
   service reactivation after returning inserted coins.
+- `VendingMachinePurchaseTest` verifies exact-payment and change purchases,
+  reserve composition, inserted-coin isolation, deterministic validation
+  precedence, and state preservation for every rejected purchase.
 
 ### Application tests
 
