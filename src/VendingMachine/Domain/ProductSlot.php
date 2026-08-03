@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\VendingMachine\Domain;
 
+use App\VendingMachine\Domain\Exception\ProductOutOfStock;
 use App\VendingMachine\Domain\Exception\InvalidProductPrice;
 use App\VendingMachine\Domain\Exception\NegativeProductStock;
 
@@ -56,5 +57,19 @@ final class ProductSlot
         }
 
         $this->stock = $stock;
+    }
+
+    public function ensureAvailable(): void
+    {
+        if ($this->stock === 0) {
+            throw new ProductOutOfStock($this->selector);
+        }
+    }
+
+    public function dispenseOne(): void
+    {
+        $this->ensureAvailable();
+
+        $this->stock--;
     }
 }

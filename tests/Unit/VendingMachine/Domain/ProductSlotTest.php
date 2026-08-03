@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\VendingMachine\Domain;
 
+use App\VendingMachine\Domain\Exception\ProductOutOfStock;
 use App\VendingMachine\Domain\Exception\InvalidProductPrice;
 use App\VendingMachine\Domain\Exception\NegativeProductStock;
 use App\VendingMachine\Domain\Money;
@@ -65,6 +66,49 @@ final class ProductSlotTest extends TestCase
             self::fail('Expected NegativeProductStock to be thrown.');
         } catch (NegativeProductStock) {
             self::assertSame(10, $slot->stock());
+        }
+    }
+
+    public function testItRejectsAvailabilityWhenOutOfStock(): void
+    {
+        $slot = ProductSlot::create(
+            ProductSelector::fromString('WATER'),
+            'Water',
+            Money::fromCents(65),
+        );
+
+        $this->expectException(ProductOutOfStock::class);
+
+        $slot->ensureAvailable();
+    }
+
+    public function testItDispensesOneProduct(): void
+    {
+        $slot = ProductSlot::create(
+            ProductSelector::fromString('WATER'),
+            'Water',
+            Money::fromCents(65),
+        );
+        $slot->setStock(2);
+
+        $slot->dispenseOne();
+
+        self::assertSame(1, $slot->stock());
+    }
+
+    public function testItPreservesStockWhenDispensingOutOfStockIsRejected(): void
+    {
+        $slot = ProductSlot::create(
+            ProductSelector::fromString('WATER'),
+            'Water',
+            Money::fromCents(65),
+        );
+
+        try {
+            $slot->dispenseOne();
+            self::fail('Expected ProductOutOfStock to be thrown.');
+        } catch (ProductOutOfStock) {
+            self::assertSame(0, $slot->stock());
         }
     }
 }
