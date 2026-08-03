@@ -59,4 +59,20 @@ final class VendingMachine
     {
         return $this->coinReserve->quantityOf($coin);
     }
+
+    public function insertCoin(Coin $coin): void
+    {
+        $this->insertedCoins[] = $coin;
+    }
+
+    /**
+     * @return list<Coin>
+     */
+    public function returnInsertedCoins(): array
+    {
+        $coins = $this->insertedCoins;
+        $this->insertedCoins = [];
+
+        return $coins;
+    }
 }

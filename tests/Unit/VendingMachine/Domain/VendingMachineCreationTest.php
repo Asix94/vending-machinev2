@@ -13,7 +13,7 @@ use App\VendingMachine\Domain\ProductSlot;
 use App\VendingMachine\Domain\VendingMachine;
 use PHPUnit\Framework\TestCase;
 
-final class VendingMachineTest extends TestCase
+final class VendingMachineCreationTest extends TestCase
 {
     public function testItStartsWithEmptyCustomerAndReserveState(): void
     {
