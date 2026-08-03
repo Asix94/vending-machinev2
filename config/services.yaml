@@ -5,6 +5,8 @@ services:
 
   App\:
     resource: '../src/'
+    exclude:
+      - '../src/VendingMachine/'
 
   App\Controller\:
     resource: '../src/Controller/'

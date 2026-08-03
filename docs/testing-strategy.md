@@ -70,9 +70,13 @@ Current example:
 
 ### Application tests
 
-Application tests will exercise use cases through their public interfaces. They
-will use in-memory adapters for output ports, allowing orchestration and error
-handling to be tested without PostgreSQL.
+Application tests exercise use cases through their public interfaces. They use
+in-memory adapters or test doubles for repository contracts, allowing
+orchestration and error handling to be tested without PostgreSQL.
+
+- `InsertCoinUseCaseTest` verifies the resulting balance, accumulation across
+  executions, state preservation for invalid denominations, and explicit
+  persistence through `VendingMachineRepository`.
 
 ### Integration tests
 
@@ -89,7 +93,8 @@ together.
 
 ## Directory Structure
 
-The test suite will evolve toward:
+The test suite currently separates Domain unit tests from Application tests and
+will evolve toward:
 
 ```text
 tests/
@@ -113,7 +118,7 @@ docker compose exec php vendor/bin/phpunit
 Run a focused test during a TDD cycle:
 
 ```bash
-docker compose exec php vendor/bin/phpunit --filter CoinTest
+docker compose exec php vendor/bin/phpunit --filter InsertCoinUseCaseTest
 ```
 
 The complete suite must pass without warnings before committing an increment.

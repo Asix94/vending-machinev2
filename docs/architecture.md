@@ -40,34 +40,39 @@ The Domain layer contains business concepts and rules:
 - Entities;
 - Aggregates;
 - Domain Services;
-- Domain Exceptions.
+- Domain Exceptions;
+- repository interfaces for Aggregate Roots.
 
-It contains no Symfony, HTTP, PostgreSQL, or PHPUnit dependencies. `Coin` and
-`InvalidCoinDenomination` are the first implemented domain types.
+It contains no Symfony, HTTP, PostgreSQL, or PHPUnit dependencies. Repository
+interfaces express aggregate retrieval and persistence contracts without
+describing a database or mapping strategy.
 
 ## Application Layer
 
-The Application layer will coordinate use cases such as inserting a coin,
-returning inserted coins, servicing stock, and purchasing a product.
+The Application layer coordinates use cases such as inserting a coin, returning
+inserted coins, servicing stock, and purchasing a product. `InsertCoinUseCase`
+is the first implemented use case.
 
 Application code may:
 
-- load domain state through output ports;
+- load domain state through repository interfaces defined by the Domain;
 - invoke domain behavior;
 - persist resulting state;
-- define input commands and application responses;
+- define use-case inputs and application responses;
 - establish transaction boundaries.
 
 It must not contain the business rules owned by the domain model.
 
 ## Ports
 
-Ports are interfaces that define how the application communicates across its
+Ports are interfaces that define how the system communicates across its
 boundaries.
 
 - Inbound ports expose application use cases to delivery adapters.
-- Outbound ports describe capabilities required from persistence or external
-  systems.
+- Repository interfaces for Aggregate Roots belong to the Domain because they
+  express access to domain aggregates.
+- Other outbound ports belong to the layer whose policy requires the external
+  capability, normally Application.
 
 Ports are introduced from concrete use-case needs. Generic repositories,
 service interfaces, and buses are not created without an actual consumer.
@@ -78,9 +83,10 @@ Inbound adapters translate an external request into an application call. An
 HTTP controller, for example, validates transport syntax, invokes a use case,
 and maps its outcome to an HTTP response.
 
-Outbound adapters implement output ports. A PostgreSQL repository will map
-persisted records to domain objects and save aggregate state without leaking
-database concepts into the domain.
+Outbound adapters implement repository interfaces or other output ports.
+`InMemoryVendingMachineRepository` is the first local persistence adapter. It
+keeps state for the lifetime of its PHP object and can later be replaced by a
+PostgreSQL adapter without changing Application or Domain.
 
 ## Dependency Direction
 
@@ -88,13 +94,17 @@ Allowed dependency direction:
 
 ```text
 Adapters -> Application -> Domain
+Infrastructure ------------> Domain
 ```
 
-An outbound adapter may also depend on an output port declared by the
-Application layer:
+Application consumes the repository abstraction defined beside the Aggregate
+Root, while Infrastructure provides the concrete adapter:
 
 ```text
-PostgreSQL adapter -> Repository port -> Application and Domain
+Application -> Domain repository interface <- Infrastructure
+                       |
+                       v
+                Domain Aggregate Root
 ```
 
 Forbidden dependencies include:
@@ -131,8 +141,9 @@ generic service interfaces are avoided.
 
 ### Dependency Inversion Principle
 
-Application policy depends on abstractions it owns, while infrastructure
-depends on and implements those abstractions.
+Application depends on domain abstractions rather than concrete persistence.
+Infrastructure depends on and implements those abstractions. Application owns
+output ports only when they do not represent domain aggregate repositories.
 
 ## Design Patterns
 
@@ -145,10 +156,10 @@ goals.
 | Entity | Track a product slot by stable selector while stock changes | `ProductSlot` implemented |
 | Domain Service | Calculate optimal exact change from a limited reserve | `ExactChangeCalculator` implemented |
 | Aggregate | Protect catalog, customer operation, reserve, service, and atomic purchases | `VendingMachine` implemented |
-| Repository | Persist and restore aggregate state | Planned |
-| Command/Handler | Represent and execute application actions | Planned |
+| Repository | Retrieve and persist Aggregate Roots through a Domain-owned interface | `VendingMachineRepository` implemented; durable implementation planned |
+| Use Case | Coordinate application actions without owning domain rules | `InsertCoinUseCase` implemented |
 | Strategy | Allow change-calculation policies to vary if needed | Deferred until a second policy exists |
-| Adapter | Connect HTTP and PostgreSQL to application ports | Planned |
+| Adapter | Connect external mechanisms to inward-facing interfaces | In-memory persistence implemented; HTTP and PostgreSQL planned |
 
 ## Current Structure
 
@@ -157,35 +168,43 @@ Only implemented concepts have directories:
 ```text
 src/
 └── VendingMachine/
-    └── Domain/
-        ├── Coin.php
-        ├── CoinReserve.php
-        ├── Money.php
-        ├── ProductSelector.php
-        ├── ProductSlot.php
-        ├── PurchaseResult.php
-        ├── VendingMachine.php
-        ├── Exception/
-        │   ├── DuplicateProductSelector.php
-        │   ├── EmptyProductCatalog.php
-        │   ├── EmptyProductSelector.php
-        │   ├── ExactChangeUnavailable.php
-        │   ├── InsufficientBalance.php
-        │   ├── InsufficientCoinQuantity.php
-        │   ├── InvalidCoinDenomination.php
-        │   ├── InvalidProductPrice.php
-        │   ├── NegativeCoinQuantity.php
-        │   ├── NegativeMoneyAmount.php
-        │   ├── NegativeProductStock.php
-        │   ├── ProductNotFound.php
-        │   ├── ProductOutOfStock.php
-        │   └── ServiceUnavailableDuringOperation.php
-        └── Service/
-            └── ExactChangeCalculator.php
+    ├── Application/
+    │   └── InsertCoin/
+    │       └── InsertCoinUseCase.php
+    ├── Domain/
+    │   ├── Coin.php
+    │   ├── CoinReserve.php
+    │   ├── Money.php
+    │   ├── ProductSelector.php
+    │   ├── ProductSlot.php
+    │   ├── PurchaseResult.php
+    │   ├── VendingMachine.php
+    │   ├── Exception/
+    │   │   ├── DuplicateProductSelector.php
+    │   │   ├── EmptyProductCatalog.php
+    │   │   ├── EmptyProductSelector.php
+    │   │   ├── ExactChangeUnavailable.php
+    │   │   ├── InsufficientBalance.php
+    │   │   ├── InsufficientCoinQuantity.php
+    │   │   ├── InvalidCoinDenomination.php
+    │   │   ├── InvalidProductPrice.php
+    │   │   ├── NegativeCoinQuantity.php
+    │   │   ├── NegativeMoneyAmount.php
+    │   │   ├── NegativeProductStock.php
+    │   │   ├── ProductNotFound.php
+    │   │   ├── ProductOutOfStock.php
+    │   │   └── ServiceUnavailableDuringOperation.php
+    │   ├── Repository/
+    │   │   └── VendingMachineRepository.php
+    │   └── Service/
+    │       └── ExactChangeCalculator.php
+    └── Infrastructure/
+        └── Persistence/
+            └── InMemoryVendingMachineRepository.php
 ```
 
-Application and adapter structures will be added with their first concrete use
-cases.
+HTTP delivery and durable persistence structures will be added with their first
+concrete use cases.
 
 ## Deferred Concerns
 
