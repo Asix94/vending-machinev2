@@ -28,6 +28,11 @@ number would not affect any business decision.
 amount in integer cents. Unlike `Coin`, it is not restricted to physical coin
 denominations.
 
+`ProductSelector` is a Value Object that represents the non-empty selector used
+to address a product slot. Two selectors with the same value are equivalent.
+The selector will provide the stable identity value of `ProductSlot`, but it is
+not an Entity by itself.
+
 ## Entity
 
 An Entity represents a domain concept with a stable identity and a lifecycle.
@@ -111,6 +116,9 @@ be introduced when that behavior is implemented.
 | `Coin` | Value Object | Implemented |
 | `InvalidCoinDenomination` | Domain Exception | Implemented |
 | `Money` | Value Object | Implemented |
+| `NegativeMoneyAmount` | Domain Exception | Implemented |
+| `ProductSelector` | Value Object | Implemented |
+| `EmptyProductSelector` | Domain Exception | Implemented |
 | `ProductSlot` | Entity | Planned |
 | `VendingMachine` | Aggregate Root | Planned |
 | Exact-change calculator | Domain Service candidate | Planned |

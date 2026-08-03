@@ -141,7 +141,7 @@ goals.
 
 | Pattern | Intended use | Status |
 | --- | --- | --- |
-| Value Object | Money, coins, and selectors | `Coin` implemented |
+| Value Object | Money, coins, and selectors | `Coin`, `Money`, and `ProductSelector` implemented |
 | Aggregate | Protect machine consistency and atomic purchases | Planned |
 | Repository | Persist and restore aggregate state | Planned |
 | Command/Handler | Represent and execute application actions | Planned |
@@ -157,8 +157,12 @@ src/
 └── VendingMachine/
     └── Domain/
         ├── Coin.php
+        ├── Money.php
+        ├── ProductSelector.php
         └── Exception/
-            └── InvalidCoinDenomination.php
+            ├── EmptyProductSelector.php
+            ├── InvalidCoinDenomination.php
+            └── NegativeMoneyAmount.php
 ```
 
 Application and adapter structures will be added with their first concrete use
