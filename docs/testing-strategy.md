@@ -48,7 +48,12 @@ Current example:
 - `ProductSlotTest` verifies entity creation, positive prices, absolute stock
   updates, and state preservation when negative stock is rejected.
 - `CoinReserveTest` verifies an empty initial reserve, immutable absolute
-  quantity updates, zero quantities, and rejection of negative quantities.
+  quantity updates, zero quantities, available denominations, and rejection of
+  negative quantities.
+- `ExactChangeCalculatorTest` verifies zero change, exact denominations,
+  multiple-coin combinations, bounded inventory where greedy selection fails,
+  minimum coin count, deterministic descending order, and unavailable exact
+  change.
 
 ### Application tests
 

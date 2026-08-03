@@ -92,6 +92,8 @@ The initial product catalog contains:
 - Change must be exact and use the smallest possible number of coins.
 - If multiple minimum-coin combinations exist, higher denominations are
   preferred.
+- The domain returns selected change coins ordered from highest to lowest
+  denomination.
 - A successful purchase decreases product stock by one.
 - After a successful purchase, inserted coins are transferred to the coin
   reserve, returned change is removed from the reserve, and the inserted
@@ -137,3 +139,5 @@ The initial product catalog contains:
    higher-denomination preference for ties.
 7. Concurrency is deferred from the initial version while domain operations
    remain atomic to allow future concurrency controls.
+8. Exact change uses a bounded recursive search because the domain has four
+   fixed denominations and greedy selection can miss valid combinations.

@@ -143,10 +143,11 @@ goals.
 | --- | --- | --- |
 | Value Object | Money, coins, selectors, and immutable coin composition | `Coin`, `Money`, `ProductSelector`, and `CoinReserve` implemented |
 | Entity | Track a product slot by stable selector while stock changes | `ProductSlot` implemented |
+| Domain Service | Calculate optimal exact change from a limited reserve | `ExactChangeCalculator` implemented |
 | Aggregate | Protect machine consistency and atomic purchases | Planned |
 | Repository | Persist and restore aggregate state | Planned |
 | Command/Handler | Represent and execute application actions | Planned |
-| Strategy | Allow change-calculation policies to vary if needed | Candidate |
+| Strategy | Allow change-calculation policies to vary if needed | Deferred until a second policy exists |
 | Adapter | Connect HTTP and PostgreSQL to application ports | Planned |
 
 ## Current Structure
@@ -162,13 +163,16 @@ src/
         ├── Money.php
         ├── ProductSelector.php
         ├── ProductSlot.php
-        └── Exception/
-            ├── EmptyProductSelector.php
-            ├── InvalidCoinDenomination.php
-            ├── InvalidProductPrice.php
-            ├── NegativeCoinQuantity.php
-            ├── NegativeMoneyAmount.php
-            └── NegativeProductStock.php
+        ├── Exception/
+        │   ├── EmptyProductSelector.php
+        │   ├── ExactChangeUnavailable.php
+        │   ├── InvalidCoinDenomination.php
+        │   ├── InvalidProductPrice.php
+        │   ├── NegativeCoinQuantity.php
+        │   ├── NegativeMoneyAmount.php
+        │   └── NegativeProductStock.php
+        └── Service/
+            └── ExactChangeCalculator.php
 ```
 
 Application and adapter structures will be added with their first concrete use

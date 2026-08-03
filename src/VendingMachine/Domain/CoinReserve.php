@@ -36,4 +36,20 @@ final readonly class CoinReserve
 
         return new self($quantities);
     }
+
+    /**
+     * @return list<Coin>
+     */
+    public function availableDenominations(): array
+    {
+        $denominations = [];
+
+        foreach ($this->quantities as $cents => $quantity) {
+            if ($quantity > 0) {
+                $denominations[] = Coin::fromCents($cents);
+            }
+        }
+
+        return $denominations;
+    }
 }

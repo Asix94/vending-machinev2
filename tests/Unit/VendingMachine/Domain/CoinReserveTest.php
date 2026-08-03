@@ -53,4 +53,18 @@ final class CoinReserveTest extends TestCase
 
         self::assertSame(0, $emptyReserve->quantityOf($coin));
     }
+
+    public function testItExposesOnlyAvailableDenominations(): void
+    {
+        $reserve = CoinReserve::empty()
+            ->withQuantity(Coin::fromCents(25), 0)
+            ->withQuantity(Coin::fromCents(10), 2);
+
+        $denominations = array_map(
+            static fn (Coin $coin): int => $coin->cents(),
+            $reserve->availableDenominations(),
+        );
+
+        self::assertSame([10], $denominations);
+    }
 }

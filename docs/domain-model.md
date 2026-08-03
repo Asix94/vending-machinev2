@@ -113,9 +113,14 @@ A Domain Service contains domain behavior that does not naturally belong to a
 single Entity or Value Object. It must remain free of application and
 infrastructure concerns.
 
-The exact-change algorithm is a candidate Domain Service because it calculates
-a result from an amount and a limited coin reserve. The abstraction will only
-be introduced when that behavior is implemented.
+`ExactChangeCalculator` is a stateless Domain Service because it combines a
+monetary amount, the physical composition of a limited coin reserve, and the
+business policy for selecting optimal change. This behavior does not belong
+naturally to a single Entity or Value Object.
+
+The service returns coins ordered from highest to lowest denomination, minimizes
+the total number of coins, and raises `ExactChangeUnavailable` when no exact
+combination exists. It does not modify the reserve.
 
 ## Model Status
 
@@ -132,8 +137,9 @@ be introduced when that behavior is implemented.
 | `NegativeProductStock` | Domain Exception | Implemented |
 | `CoinReserve` | Value Object | Implemented |
 | `NegativeCoinQuantity` | Domain Exception | Implemented |
+| `ExactChangeCalculator` | Domain Service | Implemented |
+| `ExactChangeUnavailable` | Domain Exception | Implemented |
 | `VendingMachine` | Aggregate Root | Planned |
-| Exact-change calculator | Domain Service candidate | Planned |
 
 ## Domain Independence
 
